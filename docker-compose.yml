@@ -1,0 +1,31 @@
+---
+version: "2.4"
+
+services:
+
+  test_localnet_ip:
+    image: alpine:latest
+    container_name: test_localnet_ip
+  
+    command: tail -F anything
+
+    networks:
+      HomeLAN:
+        ipv4_address: 172.30.5.2
+
+networks:
+  HomeLAN:
+    driver: macvlan
+    driver_opts:
+      # set physical NIC eg. eth0 or physical NIC _and_ VLAN tag here eg. eth0.10
+      parent: eth1
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.5.0/24
+          gateway: 172.30.5.254
+          # our range is .1 to .6
+          ip_range: 172.30.5.0/29
+          aux_addresses: 
+            # IPs to ignore in the range above - don't hand these out
+            rpi_one: 172.30.5.1
